@@ -1,0 +1,21 @@
+server:
+  port: 5000
+
+org:
+  slf4j:
+    simpleLogger:
+      showDateTime: true
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL57Dialect
+        connection:
+          driver_class: com.mysql.jdbc.Driver
+  datasource:
+    url: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/rms_db
+    username: ${MYSQL_USER}
+    password: ${MYSQL_PASSWORD}
