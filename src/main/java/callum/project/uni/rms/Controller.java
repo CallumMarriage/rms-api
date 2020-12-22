@@ -11,8 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 @RestController
-@RequestMapping("role")
 @Slf4j
 @AllArgsConstructor
 public class Controller {
@@ -22,10 +22,16 @@ public class Controller {
 //    private final ProjectService projectService;
 
 
-    @CrossOrigin
     @GetMapping(value = "/account/id/{id}", produces = "application/json")
     public @ResponseBody TargetAccount getTargetAccount(@PathVariable String id){
         return roleService.retrieveTargetAccount(id);
+    }
+
+    @CrossOrigin(value = "http://localhost:3000")
+    @GetMapping(value = "/role/id/{id}", produces = "application/json")
+    public @ResponseBody TargetRole getTargetRole(@PathVariable String id){
+        log.info("REQUEST RECEIVED");
+        return roleService.retrieveTargetRole(id);
     }
 //
 //    @CrossOrigin

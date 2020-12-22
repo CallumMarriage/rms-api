@@ -18,7 +18,6 @@ import java.sql.Date;
 @Table(name = "account")
 public class Account {
 
-
     @Id
     private String accountNumber;
 

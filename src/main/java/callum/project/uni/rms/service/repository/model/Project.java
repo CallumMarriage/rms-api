@@ -23,6 +23,8 @@ public class Project {
     @Id
     private String projectCode;
 
+    private String accountNumber;
+
     private String description;
 
     private Date startDate;

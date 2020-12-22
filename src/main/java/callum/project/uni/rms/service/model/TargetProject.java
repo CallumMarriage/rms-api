@@ -14,6 +14,8 @@ public class TargetProject {
 
     private String projectCode;
 
+    private String accountNumber;
+
     private String description;
 
     private LocalDate startDate;

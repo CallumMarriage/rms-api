@@ -23,14 +23,13 @@ public class Role {
 
     private String roleName;
 
-    private Date startDate;
-
     private String description;
-
-    private Date endDate;
 
     private String projectCode;
 
     private String accountNumber;
 
+    private Date startDate;
+
+    private Date endDate;
 }
