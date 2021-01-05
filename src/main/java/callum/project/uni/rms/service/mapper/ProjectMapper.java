@@ -1,6 +1,6 @@
 package callum.project.uni.rms.service.mapper;
 
-import callum.project.uni.rms.service.model.TargetProject;
+import callum.project.uni.rms.service.model.response.TargetProject;
 import callum.project.uni.rms.service.repository.model.Project;
 import org.springframework.stereotype.Component;
 
@@ -10,7 +10,7 @@ import static callum.project.uni.rms.service.mapper.MapperUtils.convertSqlDateTo
 public class ProjectMapper {
 
 
-    public TargetProject mapProjectToTargetProject(Project dbProject){
+    public static TargetProject mapProjectToTargetProject(Project dbProject){
         
         return TargetProject.builder()
                 .projectCode(dbProject.getProjectCode())

@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -15,20 +16,26 @@ import java.sql.Date;
 @Builder
 @Data
 @Entity
-@Table(name = "PROJECT")
+@Table(name = "project")
 public class Project {
 
+    @Column(name = "project_name")
     private String projectName;
 
     @Id
+    @Column(name = "project_code")
     private String projectCode;
 
+    @Column(name = "account_number")
     private String accountNumber;
 
+    @Column(name = "description")
     private String description;
 
+    @Column(name = "start_date")
     private Date startDate;
 
+    @Column(name = "end_date")
     private Date endDate;
 
 }

@@ -1,8 +1,7 @@
 package callum.project.uni.rms.service.mapper;
 
 import callum.project.uni.rms.service.repository.model.Role;
-import callum.project.uni.rms.service.model.TargetRole;
-import org.junit.jupiter.api.BeforeAll;
+import callum.project.uni.rms.service.model.response.TargetRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

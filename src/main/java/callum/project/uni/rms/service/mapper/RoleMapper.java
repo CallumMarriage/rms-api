@@ -1,6 +1,6 @@
 package callum.project.uni.rms.service.mapper;
 
-import callum.project.uni.rms.service.model.TargetRole;
+import callum.project.uni.rms.service.model.response.TargetRole;
 import callum.project.uni.rms.service.repository.model.Role;
 import org.springframework.stereotype.Component;
 
@@ -9,7 +9,7 @@ import static callum.project.uni.rms.service.mapper.MapperUtils.convertSqlDateTo
 @Component
 public class RoleMapper {
 
-    public TargetRole mapDynamoDBToTargetModel(Role dbRole){
+    public static TargetRole mapDynamoDBToTargetModel(Role dbRole){
         return TargetRole.builder()
                 .accountNumber(dbRole.getAccountNumber())
                 .id(dbRole.getId())

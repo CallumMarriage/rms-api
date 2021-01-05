@@ -1,13 +1,14 @@
-package callum.project.uni.rms.service.model;
+package callum.project.uni.rms.service.model.response;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
 import java.time.LocalDate;
 
+@AllArgsConstructor
 @Builder
 @Data
-public class TargetRole {
+@ToString
+public class TargetRole extends AbstractServiceResponse {
 
     private String id;
 

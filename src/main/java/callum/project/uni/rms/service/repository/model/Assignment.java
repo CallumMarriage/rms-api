@@ -13,25 +13,17 @@ import java.sql.Date;
 @Builder
 @Data
 @Entity
-@Table(name = "role")
-public class Role {
+@IdClass(AssignmentId.class)
+@Table(name = "assignment")
+public class Assignment {
 
     @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private String id;
+    @Column(name = "user_id")
+    private int userId;
 
-    @Column(name = "role_name")
-    private String roleName;
-
-    @Column(name = "description")
-    private String description;
-
-    @Column(name = "project_code")
-    private String projectCode;
-
-    @Column(name = "account_number")
-    private String accountNumber;
+    @Id
+    @Column(name = "role_id")
+    private String roleId;
 
     @Column(name = "start_date")
     private Date startDate;
