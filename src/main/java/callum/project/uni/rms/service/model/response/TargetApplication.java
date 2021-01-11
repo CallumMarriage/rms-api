@@ -17,4 +17,10 @@ public class TargetApplication {
     private LocalDate lastUpdatedDate;
 
     private ApplicationStatus applicationStatus;
+
+    private String roleId;
+
+    private String accountId;
+
+    private String projectId;
 }

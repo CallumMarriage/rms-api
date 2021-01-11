@@ -30,12 +30,22 @@ public class Role {
     @Column(name = "project_code")
     private String projectCode;
 
+    @Column(name = "project_name")
+    private String projectName;
+
     @Column(name = "account_number")
     private String accountNumber;
+
+    @Column(name = "account_name")
+    private String accountName;
 
     @Column(name = "start_date")
     private Date startDate;
 
     @Column(name = "end_date")
     private Date endDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "closest_cap_office")
+    private CapgeminiOffice closestCapOffice;
 }

@@ -2,7 +2,7 @@ package callum.project.uni.rms.service;
 
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.mapper.RoleMapper;
-import callum.project.uni.rms.service.model.response.AbstractServiceResponse;
+import callum.project.uni.rms.service.model.response.role.PotentialRoles;
 import callum.project.uni.rms.service.model.response.TargetRole;
 import callum.project.uni.rms.service.model.response.TargetRoleHistory;
 import callum.project.uni.rms.service.repository.RoleRepository;
@@ -42,7 +42,26 @@ public class RoleService {
         }
     }
 
-    public TargetRoleHistory retrieveRoleHistory(int userId) throws ServiceException {
+    public PotentialRoles retrievePotentialRoles() throws ServiceException {
+        try {
+//            List<Role> potentialRoles = roleRepository.findRole();
+            List<Role> potentialRoles = roleRepository.findPotentialRoles();
+            if (potentialRoles.isEmpty()) {
+                return null;
+            }
+
+            List<TargetRole> targetPotentialRoles = potentialRoles.stream()
+                    .map(RoleMapper::mapDynamoDBToTargetModel)
+                    .collect(Collectors.toList());
+
+            return new PotentialRoles(targetPotentialRoles);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new ServiceException(e.getMessage());
+        }
+    }
+
+    public TargetRoleHistory retrieveRoleHistory(Long userId) throws ServiceException {
         //Collect all of the role ids associated to user
         try {
             Iterable<Role> roleIds = roleRepository.findRolesForUser(userId);
@@ -51,7 +70,7 @@ public class RoleService {
                     .rolehistory(createList(roleIds))
                     .build();
         } catch (RuntimeException e) {
-            log.info(e.getMessage());
+            log.error(e.getMessage());
             throw new ServiceException(e.getMessage());
         }
 

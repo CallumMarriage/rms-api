@@ -5,10 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.sql.Date;
 import java.time.LocalDate;
 
 @Data
@@ -20,11 +18,12 @@ import java.time.LocalDate;
 public class RoleApplication {
 
     @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name = "application_id")
-    private String applicationId;
+    private Long applicationId;
 
     @Column(name = "applicant_id")
-    private String applicantId;
+    private Long applicantId;
 
     @Column(name = "role_id")
     private String roleId;
@@ -36,10 +35,10 @@ public class RoleApplication {
     private String accountId;
 
     @Column(name = "application_date")
-    private LocalDate applicationDate;
+    private Date applicationDate;
 
     @Column(name = "last_updated_date")
-    private LocalDate lastUpdatedDate;
+    private Date lastUpdatedDate;
 
     @Column(name = "application_status")
     private ApplicationStatus applicationStatus;

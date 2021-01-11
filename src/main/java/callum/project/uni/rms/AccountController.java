@@ -1,6 +1,6 @@
 package callum.project.uni.rms;
 
-import callum.project.uni.rms.model.ControllerResponse;
+import callum.project.uni.rms.model.res.ControllerRes;
 import callum.project.uni.rms.service.AccountService;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.model.response.TargetAccount;
@@ -25,9 +25,8 @@ public class AccountController {
     private final RequestValidator requestValidator;
 
     @GetMapping(value = "/account/id/{id}", produces = "application/json")
-    public ResponseEntity<ControllerResponse> getTargetAccount(@PathVariable String id) {
-
-
+    public ResponseEntity<ControllerRes> retrieveTargetAccount(@PathVariable String id) {
+        
         //Validate Request id
         if (requestValidator.validateGetByIdReq(id)) {
             //Return 400 response

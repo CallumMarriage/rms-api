@@ -11,13 +11,16 @@ public class RoleMapper {
 
     public static TargetRole mapDynamoDBToTargetModel(Role dbRole){
         return TargetRole.builder()
+                .accountName(dbRole.getAccountName())
                 .accountNumber(dbRole.getAccountNumber())
                 .id(dbRole.getId())
+                .projectName(dbRole.getProjectName())
                 .projectCode(dbRole.getProjectCode())
                 .endDate(convertSqlDateToLocalDate(dbRole.getEndDate()))
                 .startDate(convertSqlDateToLocalDate(dbRole.getStartDate()))
                 .roleName(dbRole.getRoleName())
                 .description(dbRole.getDescription())
+                .closestCapOffice(dbRole.getClosestCapOffice())
                 .build();
     }
 

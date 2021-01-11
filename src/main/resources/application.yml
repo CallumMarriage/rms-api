@@ -6,8 +6,8 @@ server:
     key-store-password: password
 
 org:
-    simpleLogger:
-      showDateTime: true
+  simpleLogger:
+    showDateTime: true
 
 spring:
   jpa:
@@ -15,7 +15,7 @@ spring:
       ddl-auto: create-drop
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL57Dialect
+        dialect: org.hibernate.dialect.MySQL5InnoDBDialect
         connection:
           driver_class: com.mysql.jdbc.Driver
         c3po:

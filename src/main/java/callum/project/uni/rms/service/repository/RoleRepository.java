@@ -12,5 +12,8 @@ import java.util.List;
 public interface RoleRepository extends CrudRepository<Role, String> {
 
     @Query(value = "SELECT r.* from role r join (SELECT ass.role_id FROM assignment ass WHERE ass.user_id = :id) ms ON r.id = ms.role_id", nativeQuery = true)
-    List<Role> findRolesForUser(@Param("id") int id);
+    List<Role> findRolesForUser(@Param("id") Long id);
+
+    @Query(value = "SELECT r.* from role r where r.id not in (SELECT ass.role_id FROM assignment ass)", nativeQuery = true)
+    List<Role> findPotentialRoles();
 }

@@ -1,13 +1,14 @@
 package callum.project.uni.rms;
 
-import callum.project.uni.rms.model.ControllerResponse;
+import callum.project.uni.rms.model.res.ControllerRes;
 import callum.project.uni.rms.service.AccountService;
 import callum.project.uni.rms.service.ProjectService;
 import callum.project.uni.rms.service.RoleService;
 import callum.project.uni.rms.service.UserService;
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.request.UserCreateRequest;
+import callum.project.uni.rms.model.req.UserCreateReq;
 import callum.project.uni.rms.service.model.response.*;
+import callum.project.uni.rms.service.model.response.user.FullUserInfo;
 import callum.project.uni.rms.validator.RequestValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +36,7 @@ public class BasicUserInfoController {
     private final ProjectService projectService;
 
     @PostMapping(value = "/user")
-    public ResponseEntity<ControllerResponse> addNewUser(@RequestBody UserCreateRequest userCreateRequest) {
+    public ResponseEntity<ControllerRes> addNewUser(@RequestBody UserCreateReq userCreateRequest) {
         if (requestValidator.validateUserCreateRequest(userCreateRequest)) {
             return buildBadReqResponse();
         }
@@ -44,32 +45,47 @@ public class BasicUserInfoController {
 
         try {
             if (userService.userExists(googleId)) {
-                TargetUser user = userService.retrieveUserDetails(googleId);
+                TargetUser user = userService.retrieveUserDetailsByGoogleId(googleId);
                 return ResponseEntity.status(202)
                         .body(createControllerResponse(user));
             }
 
             TargetUser user = userService.createUser(googleId);
-
-            return buildOkResponse(buildUserInfoResponse(user));
+            return buildCreatedResponse(buildUserInfoResponse(user));
         } catch (ServiceException e) {
             return buildErrorResponse();
         }
     }
 
     @GetMapping(value = "/user/info")
-    public ResponseEntity<ControllerResponse> getUserInfo(@RequestParam String userId){
+    public ResponseEntity<ControllerRes> getUserInfo(@RequestParam String googleId){
 
-        log.info("Request received");
-        if (requestValidator.validateGetByIdReq(userId)){
+        if (requestValidator.validateGetByIdReq(googleId)){
             return buildBadReqResponse();
         }
 
         try {
-            TargetUser user = userService.retrieveUserDetails(userId);
+            TargetUser user = userService.retrieveUserDetailsByGoogleId(googleId);
             return ResponseEntity.status(200)
                     .body(createControllerResponse(user));
         }  catch (ServiceException e) {
+            log.error(e.getMessage());
+            return buildErrorResponse();
+        }
+    }
+
+    @GetMapping(value = "/user/resourceManager/:id")
+    public ResponseEntity<ControllerRes> getResourceManagerName(@PathVariable Long rmId){
+        if (rmId == null){
+            return buildBadReqResponse();
+        }
+
+        try {
+            TargetUser user = userService.retrieveUserByInternalId(rmId);
+            return ResponseEntity.status(200)
+                    .body(createControllerResponse(user));
+        }  catch (ServiceException e) {
+            log.error(e.getMessage());
             return buildErrorResponse();
         }
     }
@@ -80,36 +96,37 @@ public class BasicUserInfoController {
      * @param user user data.
      * @return controller response model
      */
-    private ControllerResponse createControllerResponse(TargetUser user) throws ServiceException {
-        return ControllerResponse.builder()
+    private ControllerRes createControllerResponse(TargetUser user) throws ServiceException {
+        return ControllerRes.builder()
                 .responseBody(buildUserInfoResponse(user))
                 .build();
     }
 
-    private FullUserInfo buildUserInfoResponse( TargetUser user) throws ServiceException {
+    private FullUserInfo buildUserInfoResponse(TargetUser user) throws ServiceException {
         String currentRoleId = user.getCurrentRoleId();
 
         TargetRole currentRole = null;
-
-        log.info("Making request to role service for role history");
-        Optional<TargetRole> role = roleService.retrieveTargetRole(currentRoleId);
-
-        if(role.isPresent()){
-            currentRole = role.get();
-        }
-
         TargetAccount currentAccount = null;
         TargetProject currentProject = null;
 
-        if (currentRole != null) {
-            log.info("Making request to account service");
+        if (currentRoleId != null) {
+            log.debug("Making request to role service for role history");
+            Optional<TargetRole> role = roleService.retrieveTargetRole(currentRoleId);
+
+            if(role.isEmpty()){
+                throw new ServiceException("Error finding current role");
+            }
+
+            currentRole = role.get();
+
+            log.debug("Making request to account service");
             currentAccount = accountService.getTargetAccountById(currentRole.getAccountNumber());
 
-            log.info("Making request to project api");
+            log.debug("Making request to project api");
             currentProject = projectService.getProjectById(currentRole.getProjectCode());
         }
 
-        log.info("Build full user info object");
+        log.debug("Build full user info object");
         return FullUserInfo.builder()
                 .user(user)
                 .currentRole(currentRole)

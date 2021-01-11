@@ -1,9 +1,9 @@
 package callum.project.uni.rms.service.model.response;
 
+import callum.project.uni.rms.service.repository.model.CapgeminiOffice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -24,4 +24,5 @@ public class TargetProject extends AbstractServiceResponse {
 
     private LocalDate endDate;
 
+    private CapgeminiOffice closestCapOffice;
 }

@@ -19,14 +19,13 @@ public class UserService {
     private final UserRepository userRepository;
 
     public TargetUser createUser(String googleId) throws ServiceException {
-        User user = User.builder()
-                .googleId(googleId)
-                .build();
 
+        User user = new User();
+        user.setGoogleId(googleId);
         try {
-            return UserMapper.mapDbModelToTarget(userRepository.save(user));
-
-        } catch (Exception e) {
+            User response = userRepository.save(user);
+            return UserMapper.mapDbModelToTarget(response);
+        } catch (RuntimeException e) {
             log.error(e.getMessage());
             throw new ServiceException("Error adding user");
         }
@@ -42,14 +41,33 @@ public class UserService {
         }
     }
 
-    public TargetUser retrieveUserDetails(String googleId) throws ServiceException {
+    public TargetUser retrieveUserByInternalId(Long userId) throws ServiceException {
         try {
 
+            Optional<User> user = userRepository.findById(userId);
+
+            if(user.isEmpty()){
+                throw new ServiceException("Expected user not found");
+            }
+
+            return UserMapper.mapDbModelToTarget(user.get());
+
+        } catch (RuntimeException e) {
+            throw new ServiceException("Error finding user");
+        }
+    }
+
+    public TargetUser retrieveUserDetailsByGoogleId(String googleId) throws ServiceException {
+        try {
+
+            log.info("Google ID for user request {}", googleId);
             Optional<User> user = userRepository.findByGoogleId(googleId);
 
-            return UserMapper.mapDbModelToTarget(
-                    user.orElseThrow(() -> new ServiceException("Expected user not found"))
-            );
+            if(user.isEmpty()){
+                throw new ServiceException("Expected user not found");
+            }
+
+            return UserMapper.mapDbModelToTarget(user.get());
 
         } catch (RuntimeException e) {
             throw new ServiceException("Error finding user");

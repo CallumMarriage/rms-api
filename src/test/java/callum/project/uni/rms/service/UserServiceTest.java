@@ -11,7 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataAccessException;
 
+import java.sql.SQLDataException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -36,13 +38,14 @@ class UserServiceTest {
     @Test
     @DisplayName("When user repository returns a valid user, then user exists should return true")
     void userExists_returnsTrue() throws ServiceException {
+
+        User user = new User();
+        user.setGoogleId(GOOGLE_ID);
+        user.setId(1L);
+        user.setCurrentRoleId("1128012");
+
         when(userRepository.findByGoogleId(any(String.class)))
-                .thenReturn(Optional.of(
-                        User.builder()
-                                .googleId(GOOGLE_ID)
-                                .id(1)
-                                .currentRoleId("1128012")
-                                .build()));
+                .thenReturn(Optional.of(user));
         assertTrue(userService.userExists(GOOGLE_ID));
     }
 
@@ -56,11 +59,10 @@ class UserServiceTest {
 
     @Test
     void createUser_happyPath() throws ServiceException {
-        User user = User.builder()
-                .googleId(GOOGLE_ID)
-                .currentRoleId("123")
-                .id(1)
-                .build();
+        User user = new User();
+        user.setGoogleId(GOOGLE_ID);
+        user.setId(1L);
+        user.setCurrentRoleId("123");
 
         when(userRepository.save(any(User.class)))
                 .thenReturn(user);
@@ -71,13 +73,13 @@ class UserServiceTest {
                 () -> assertEquals("123", targetUser.getCurrentRoleId()));
     }
 
-//    @Test
-//    void createUser_sqlException() {
-//        when(userRepository.save(any(User.class)))
-//                .thenThrow(DataAccessException.class);
-//
-//        assertThrows(ServiceException.class,() -> userService.createUser(GOOGLE_ID));
-//    }
+    @Test
+    void createUser_sqlException() {
+        when(userRepository.save(any(User.class)))
+                .thenThrow(IllegalArgumentException.class);
+
+        assertThrows(ServiceException.class,() -> userService.createUser(GOOGLE_ID));
+    }
 
     @AfterEach
     void tearDown() {

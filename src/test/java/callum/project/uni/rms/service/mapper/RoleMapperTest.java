@@ -13,13 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RoleMapperTest {
 
-    private RoleMapper roleMapper;
-
-    @BeforeEach
-    private void setup(){
-        this.roleMapper = new RoleMapper();
-    }
-
     @Test
     @DisplayName("Test basic mapping")
     void basicMap(){
@@ -30,7 +23,7 @@ public class RoleMapperTest {
         role.setEndDate(Date.valueOf("2021-12-21"));
         role.setStartDate(Date.valueOf("2021-12-21"));
 
-        TargetRole mappedRole = roleMapper.mapDynamoDBToTargetModel(role);
+        TargetRole mappedRole = RoleMapper.mapDynamoDBToTargetModel(role);
         LocalDate expectedEndDateTime = LocalDate.of(2021, 12, 21);
         assertEquals(expectedEndDateTime, mappedRole.getEndDate());
         assertEquals(expectedEndDateTime, mappedRole.getStartDate());

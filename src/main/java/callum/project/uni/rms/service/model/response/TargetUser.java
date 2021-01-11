@@ -1,5 +1,6 @@
 package callum.project.uni.rms.service.model.response;
 
+import callum.project.uni.rms.service.repository.model.CapgeminiOffice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -9,7 +10,11 @@ import lombok.Data;
 @Data
 public class TargetUser extends AbstractServiceResponse {
 
-    private int id;
+    private Long id;
 
     private String currentRoleId;
+
+    private Long resourceManagerId;
+
+    private CapgeminiOffice closestCapOffice;
 }

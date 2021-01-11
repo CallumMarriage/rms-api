@@ -10,6 +10,8 @@ public class UserMapper {
         return TargetUser.builder()
                 .id(user.getId())
                 .currentRoleId(user.getCurrentRoleId())
+                .closestCapOffice(user.getClosestCapOffice())
+                .resourceManagerId(user.getResourceManagerId())
                 .build();
     }
 }

@@ -19,6 +19,9 @@ import java.sql.Date;
 @Table(name = "account")
 public class Account {
 
+    @Column(name = "account_manager_id")
+    private String accountManagerId;
+
     @Id
     @Column(name = "account_number")
     private String accountNumber;
