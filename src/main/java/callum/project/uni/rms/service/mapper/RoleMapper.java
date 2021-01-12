@@ -21,6 +21,7 @@ public class RoleMapper {
                 .roleName(dbRole.getRoleName())
                 .description(dbRole.getDescription())
                 .closestCapOffice(dbRole.getClosestCapOffice())
+                .roleType(dbRole.getRoleType())
                 .build();
     }
 

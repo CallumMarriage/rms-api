@@ -4,14 +4,12 @@ import callum.project.uni.rms.model.res.ControllerRes;
 import callum.project.uni.rms.service.AccountService;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.model.response.TargetAccount;
+import callum.project.uni.rms.service.model.response.accounts.AccountList;
 import callum.project.uni.rms.validator.RequestValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static callum.project.uni.rms.ResponseBuilder.*;
 
@@ -36,6 +34,33 @@ public class AccountController {
         try {
             //Call Service to get response object
             TargetAccount serviceResponse = accountService.getTargetAccountById(id);
+            //Return ok response
+            return buildOkResponse(serviceResponse);
+        } catch (ServiceException e) {
+            //Return 500 response
+            return buildErrorResponse();
+        }
+    }
+
+    @GetMapping(value = "/accounts", produces = "application/json")
+    public ResponseEntity<ControllerRes> retrieveAccountList(){
+        try {
+            //Call Service to get response object
+            AccountList serviceResponse = accountService.getAccountList();
+
+            //Return ok response
+            return buildOkResponse(serviceResponse);
+        } catch (ServiceException e) {
+            //Return 500 response
+            return buildErrorResponse();
+        }
+    }
+
+    @GetMapping(value = "/accounts", params = "accountName",  produces = "application/json" )
+    public ResponseEntity<ControllerRes> retrieveAccountList(@RequestParam String accountName){
+        try {
+            //Call Service to get response object
+            AccountList serviceResponse = accountService.getAccountList(accountName);
             //Return ok response
             return buildOkResponse(serviceResponse);
         } catch (ServiceException e) {

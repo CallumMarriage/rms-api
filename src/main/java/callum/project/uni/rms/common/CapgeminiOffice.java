@@ -1,4 +1,4 @@
-package callum.project.uni.rms.service.repository.model;
+package callum.project.uni.rms.common;
 
 public enum CapgeminiOffice {
     HOLBORN,

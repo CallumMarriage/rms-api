@@ -1,5 +1,7 @@
 package callum.project.uni.rms.service.repository.model;
 
+import callum.project.uni.rms.common.CapgeminiOffice;
+import callum.project.uni.rms.common.RoleType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,6 +46,10 @@ public class Role {
 
     @Column(name = "end_date")
     private Date endDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role_type")
+    private RoleType roleType;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "closest_cap_office")

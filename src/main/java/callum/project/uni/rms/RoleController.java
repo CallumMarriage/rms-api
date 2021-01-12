@@ -1,5 +1,6 @@
 package callum.project.uni.rms;
 
+import callum.project.uni.rms.common.RoleType;
 import callum.project.uni.rms.model.res.ControllerRes;
 import callum.project.uni.rms.service.RoleService;
 import callum.project.uni.rms.service.exception.ServiceException;
@@ -25,10 +26,10 @@ public class RoleController {
     private final RequestValidator requestValidator;
     private final RoleService roleService;
 
-    @GetMapping(value = "/roles")
+    @GetMapping(value = "/roles", params = "roleType", produces = "application/json")
     public ResponseEntity<ControllerRes> getRoleHistory(@RequestParam String userId) {
         log.info("REQUEST RECEIVED");
-        if(userId == null || userId.isEmpty()){
+        if (userId == null || userId.isEmpty()) {
             log.debug("REQUEST: Failed validation");
             return buildBadReqResponse();
         }
@@ -47,6 +48,20 @@ public class RoleController {
         } catch (ServiceException e) {
             log.debug("REQUEST: System Error during processing");
 
+            return buildErrorResponse();
+        }
+    }
+
+    @GetMapping(value = "/roles", params = "roleType")
+    public ResponseEntity<ControllerRes> getRolesByRoleType(@RequestParam RoleType roleType) {
+        log.info("REQUEST RECIEVED");
+        try {
+
+            PotentialRoles potentialRoles = roleService.retrievePotentialRolesByRoleType(roleType);
+
+            return buildOkResponse(potentialRoles);
+
+        } catch (ServiceException e){
             return buildErrorResponse();
         }
     }
@@ -79,14 +94,10 @@ public class RoleController {
         }
     }
 
-    @GetMapping("/potentialRoles")
-    public ResponseEntity<ControllerRes> potentialRoles() {
+    @GetMapping(value = "/roles", produces = "application/json" )
+    public ResponseEntity<ControllerRes> getRoles() {
         try {
             PotentialRoles response = roleService.retrievePotentialRoles();
-
-            if (response == null) {
-                return buildNotFoundResponse();
-            }
 
             return buildOkResponse(response);
 

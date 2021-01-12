@@ -1,5 +1,6 @@
 package callum.project.uni.rms.service.repository.model;
 
+import callum.project.uni.rms.common.CapgeminiOffice;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

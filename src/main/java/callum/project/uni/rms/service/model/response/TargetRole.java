@@ -1,6 +1,7 @@
 package callum.project.uni.rms.service.model.response;
 
-import callum.project.uni.rms.service.repository.model.CapgeminiOffice;
+import callum.project.uni.rms.common.CapgeminiOffice;
+import callum.project.uni.rms.common.RoleType;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -18,6 +19,8 @@ public class TargetRole extends AbstractServiceResponse {
     private String accountName;
 
     private String projectName;
+
+    private RoleType roleType;
 
     private LocalDate startDate;
 

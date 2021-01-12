@@ -1,5 +1,6 @@
 package callum.project.uni.rms.service.repository;
 
+import callum.project.uni.rms.common.RoleType;
 import callum.project.uni.rms.service.repository.model.Role;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -16,4 +17,6 @@ public interface RoleRepository extends CrudRepository<Role, String> {
 
     @Query(value = "SELECT r.* from role r where r.id not in (SELECT ass.role_id FROM assignment ass)", nativeQuery = true)
     List<Role> findPotentialRoles();
+
+    List<Role> findAllByRoleType(RoleType roleType);
 }

@@ -1,5 +1,6 @@
 package callum.project.uni.rms.service;
 
+import callum.project.uni.rms.common.RoleType;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.mapper.RoleMapper;
 import callum.project.uni.rms.service.model.response.role.PotentialRoles;
@@ -42,23 +43,30 @@ public class RoleService {
         }
     }
 
+    public PotentialRoles retrievePotentialRolesByRoleType(RoleType roleType) throws ServiceException {
+        List<Role> potentialRoles = roleRepository.findAllByRoleType(roleType);
+        return mapListToPotentialRoles(potentialRoles);
+
+    }
+
     public PotentialRoles retrievePotentialRoles() throws ServiceException {
         try {
-//            List<Role> potentialRoles = roleRepository.findRole();
             List<Role> potentialRoles = roleRepository.findPotentialRoles();
-            if (potentialRoles.isEmpty()) {
-                return null;
-            }
 
-            List<TargetRole> targetPotentialRoles = potentialRoles.stream()
-                    .map(RoleMapper::mapDynamoDBToTargetModel)
-                    .collect(Collectors.toList());
+            return mapListToPotentialRoles(potentialRoles);
 
-            return new PotentialRoles(targetPotentialRoles);
         } catch (RuntimeException e) {
             log.error(e.getMessage());
             throw new ServiceException(e.getMessage());
         }
+    }
+
+    private PotentialRoles mapListToPotentialRoles(List<Role> roles) {
+        List<TargetRole> targetPotentialRoles = roles.stream()
+                .map(RoleMapper::mapDynamoDBToTargetModel)
+                .collect(Collectors.toList());
+
+        return new PotentialRoles(targetPotentialRoles);
     }
 
     public TargetRoleHistory retrieveRoleHistory(Long userId) throws ServiceException {
