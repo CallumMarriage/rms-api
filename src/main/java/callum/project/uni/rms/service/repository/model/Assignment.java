@@ -19,11 +19,11 @@ public class Assignment {
 
     @Id
     @Column(name = "user_id")
-    private int userId;
+    private Long userId;
 
     @Id
     @Column(name = "role_id")
-    private String roleId;
+    private Long roleId;
 
     @Column(name = "start_date")
     private Date startDate;

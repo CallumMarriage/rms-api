@@ -21,7 +21,7 @@ public class Role {
     @Id
     @GeneratedValue
     @Column(name = "id")
-    private String id;
+    private Long id;
 
     @Column(name = "role_name")
     private String roleName;

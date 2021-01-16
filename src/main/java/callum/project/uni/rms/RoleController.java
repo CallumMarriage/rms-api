@@ -1,12 +1,17 @@
 package callum.project.uni.rms;
 
 import callum.project.uni.rms.common.RoleType;
+import callum.project.uni.rms.model.req.RequestRole;
+import callum.project.uni.rms.model.req.RoleCreateReq;
 import callum.project.uni.rms.model.res.ControllerRes;
+import callum.project.uni.rms.service.AssignmentService;
 import callum.project.uni.rms.service.RoleService;
+import callum.project.uni.rms.service.UserService;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.model.response.TargetRole;
 import callum.project.uni.rms.service.model.response.TargetRoleHistory;
 import callum.project.uni.rms.service.model.response.role.PotentialRoles;
+import callum.project.uni.rms.service.repository.model.Role;
 import callum.project.uni.rms.validator.RequestValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +30,39 @@ public class RoleController {
 
     private final RequestValidator requestValidator;
     private final RoleService roleService;
+    private final UserService userService;
+    private final AssignmentService assignmentService;
 
-    @GetMapping(value = "/roles", params = "roleType", produces = "application/json")
+    @PostMapping(value = "/role")
+    public ResponseEntity<ControllerRes> postRoleWithUser(@RequestBody RoleCreateReq req) {
+        log.info("REQUEST RECEIVED");
+        Long userId = req.getUserId();
+        RequestRole requestRole = req.getRole();
+
+        log.info(requestRole.toString());
+        try {
+            // Add role to role database
+            Role createdRole = roleService.addNewRole(requestRole);
+
+            // Add role with user to assignment
+            assignmentService.addNewAssignment(userId,
+                    createdRole.getId(),
+                    requestRole.getStartDate(),
+                    requestRole.getEndDate());
+
+            //If no end date update current user current role / current account /current project
+            if (requestRole.getEndDate() == null) {
+                userService.updateUserProjectDetails(userId, createdRole.getId());
+            }
+
+            // return success
+            return buildCreatedResponse(TargetRole.builder().build());
+        } catch (ServiceException e) {
+            return buildErrorResponse();
+        }
+    }
+
+    @GetMapping(value = "/roles", params = "userId", produces = "application/json")
     public ResponseEntity<ControllerRes> getRoleHistory(@RequestParam String userId) {
         log.info("REQUEST RECEIVED");
         if (userId == null || userId.isEmpty()) {
@@ -36,6 +72,8 @@ public class RoleController {
 
         try {
             TargetRoleHistory serviceResponse = roleService.retrieveRoleHistory(Long.parseLong(userId));
+
+            log.info(serviceResponse.toString());
 
             if (serviceResponse.getRolehistory().isEmpty()) {
                 log.debug("REQUEST: Not found");
@@ -61,13 +99,13 @@ public class RoleController {
 
             return buildOkResponse(potentialRoles);
 
-        } catch (ServiceException e){
+        } catch (ServiceException e) {
             return buildErrorResponse();
         }
     }
 
     @GetMapping(value = "/role/id/{id}", produces = "application/json")
-    public ResponseEntity<ControllerRes> getTargetRole(@PathVariable String id) {
+    public ResponseEntity<ControllerRes> getTargetRole(@PathVariable Long id) {
         log.info("REQUEST RECEIVED");
 
         if (requestValidator.validateGetByIdReq(id)) {
@@ -94,7 +132,7 @@ public class RoleController {
         }
     }
 
-    @GetMapping(value = "/roles", produces = "application/json" )
+    @GetMapping(value = "/roles", produces = "application/json")
     public ResponseEntity<ControllerRes> getRoles() {
         try {
             PotentialRoles response = roleService.retrievePotentialRoles();

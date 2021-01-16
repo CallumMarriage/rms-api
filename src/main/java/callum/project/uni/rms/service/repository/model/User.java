@@ -1,6 +1,7 @@
 package callum.project.uni.rms.service.repository.model;
 
 import callum.project.uni.rms.common.CapgeminiOffice;
+import callum.project.uni.rms.common.UserType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -28,7 +29,10 @@ public class User {
     private String googleId;
 
     @Column(name = "current_role_id")
-    private String currentRoleId;
+    private Long currentRoleId;
+    
+    @Column(name = "user_type")
+    private UserType userType;
 
     @Column(name = "closest_cap_office")
     private CapgeminiOffice closestCapOffice;

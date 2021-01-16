@@ -77,7 +77,7 @@ public class RoleApplicationService {
                     .applicationStatus(ApplicationStatus.SUBMITTED)
                     .accountId(request.getAccountNumber())
                     .projectId(request.getProjectCode())
-                    .applicantId(Long.parseLong(request.getApplicantId()))
+                    .applicantId(request.getApplicantId())
                     .lastUpdatedDate(Date.valueOf(LocalDate.now()))
                     .roleId(request.getRoleId())
                     .build();

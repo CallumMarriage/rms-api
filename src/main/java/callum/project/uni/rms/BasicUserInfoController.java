@@ -103,7 +103,7 @@ public class BasicUserInfoController {
     }
 
     private FullUserInfo buildUserInfoResponse(TargetUser user) throws ServiceException {
-        String currentRoleId = user.getCurrentRoleId();
+        Long currentRoleId = user.getCurrentRoleId();
 
         TargetRole currentRole = null;
         TargetAccount currentAccount = null;

@@ -44,7 +44,7 @@ public class BasicUserInfoControllerTest {
     private static final Long USER_ID = 1L;
     private static final String PROJECT_CODE = "888";
     private static final String ACCOUNT_NUMBER = "999";
-    private static final String ROLE_ID = "123";
+    private static final Long ROLE_ID = 1L;
 
     @BeforeEach
     void setup(){

@@ -19,7 +19,7 @@ public class RoleMapperTest {
         Role role = new Role();
         role.setAccountNumber("18023830");
         role.setProjectCode("8302");
-        role.setId("2710380");
+        role.setId(1L);
         role.setEndDate(Date.valueOf("2021-12-21"));
         role.setStartDate(Date.valueOf("2021-12-21"));
 
@@ -29,6 +29,6 @@ public class RoleMapperTest {
         assertEquals(expectedEndDateTime, mappedRole.getStartDate());
         assertEquals("18023830", mappedRole.getAccountNumber());
         assertEquals("8302", mappedRole.getProjectCode());
-        assertEquals("2710380", mappedRole.getId());
+        assertEquals(1L, mappedRole.getId());
     }
 }

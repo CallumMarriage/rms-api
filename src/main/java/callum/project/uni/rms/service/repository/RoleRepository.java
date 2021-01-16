@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface RoleRepository extends CrudRepository<Role, String> {
+public interface RoleRepository extends CrudRepository<Role, Long> {
 
     @Query(value = "SELECT r.* from role r join (SELECT ass.role_id FROM assignment ass WHERE ass.user_id = :id) ms ON r.id = ms.role_id", nativeQuery = true)
     List<Role> findRolesForUser(@Param("id") Long id);
@@ -19,4 +19,7 @@ public interface RoleRepository extends CrudRepository<Role, String> {
     List<Role> findPotentialRoles();
 
     List<Role> findAllByRoleType(RoleType roleType);
+
+    @Query(value = "SELECT ro.* from role ro WHERE  ro.project_code = :projectCode AND ro.id IN (SELECT r.id FROM role r INNER JOIN assignment a on r.id = a.role_id)", nativeQuery = true)
+    List<Role> findPotentialRolesByProjectCode(@Param("projectCode") String projectCode);
 }

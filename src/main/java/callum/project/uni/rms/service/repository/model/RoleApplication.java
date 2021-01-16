@@ -7,14 +7,15 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.time.LocalDate;
 
 @Data
 @Builder
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "role_application")
+@Table(name = "role_application", indexes = {
+        @Index(name = "id_index", columnList = "application_id")
+})
 public class RoleApplication {
 
     @Id
@@ -26,7 +27,7 @@ public class RoleApplication {
     private Long applicantId;
 
     @Column(name = "role_id")
-    private String roleId;
+    private Long roleId;
 
     @Column(name = "project_id")
     private String projectId;

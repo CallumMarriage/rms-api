@@ -1,5 +1,6 @@
 package callum.project.uni.rms.service;
 
+import callum.project.uni.rms.model.req.AccountCreateReq;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.mapper.AccountMapper;
 import callum.project.uni.rms.service.mapper.RoleMapper;
@@ -18,6 +19,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import static callum.project.uni.rms.service.mapper.AccountMapper.mapAccountCreateReqToAccount;
 import static callum.project.uni.rms.service.mapper.AccountMapper.mapAccountToTargetAccount;
 
 @Service
@@ -27,6 +29,18 @@ public class AccountService {
 
 
     private final AccountRepository accountRepository;
+
+    public TargetAccount addNewAccount(AccountCreateReq accountCreateReq) throws ServiceException {
+        try {
+            Account newAccount = mapAccountCreateReqToAccount(accountCreateReq);
+
+            return mapAccountToTargetAccount(accountRepository.save(newAccount));
+        } catch (RuntimeException e) {
+            throw new ServiceException("Issue creating account");
+        } catch (Exception e) {
+            throw new ServiceException("Issue mapping account");
+        }
+    }
 
     public TargetAccount getTargetAccountById(String accountId) throws ServiceException {
         try {
@@ -59,15 +73,15 @@ public class AccountService {
         }
     }
 
-    public AccountList getAccountList(String accountName) throws ServiceException {
+    public TargetAccount getAccountByName(String accountName) throws ServiceException {
         try {
-            List<Account> accountsList = accountRepository.findAllByAccountName(accountName);
-            List<TargetAccount> mappedAccounts = accountsList.parallelStream()
-                    .map(AccountMapper::mapAccountToTargetAccount)
-                    .collect(Collectors.toList());
+            Optional<Account> accountOpt = accountRepository.findFirstByAccountName(accountName);
 
-            return AccountList.builder()
-                    .accountList(mappedAccounts).build();
+            if(accountOpt.isEmpty()){
+                return null;
+            }
+
+            return AccountMapper.mapAccountToTargetAccount(accountOpt.get());
         } catch (RuntimeException e) {
             throw new ServiceException("Issue retrieving account");
         } catch (Exception e) {

@@ -8,15 +8,27 @@ import callum.project.uni.rms.service.repository.model.User;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 @Service
 @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
+
+    public void updateUserProjectDetails(Long userId, Long roleId)
+            throws ServiceException {
+        try {
+            userRepository.updateUserCurrentRoleId(userId, roleId);
+        } catch (RuntimeException e) {
+            log.error(e.getMessage());
+            throw new ServiceException("Error updating user");
+        }
+    }
 
     public TargetUser createUser(String googleId) throws ServiceException {
 
@@ -46,7 +58,7 @@ public class UserService {
 
             Optional<User> user = userRepository.findById(userId);
 
-            if(user.isEmpty()){
+            if (user.isEmpty()) {
                 throw new ServiceException("Expected user not found");
             }
 
@@ -63,7 +75,7 @@ public class UserService {
             log.info("Google ID for user request {}", googleId);
             Optional<User> user = userRepository.findByGoogleId(googleId);
 
-            if(user.isEmpty()){
+            if (user.isEmpty()) {
                 throw new ServiceException("Expected user not found");
             }
 

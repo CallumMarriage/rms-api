@@ -15,6 +15,7 @@ public class ApplicationMapper {
                 .accountId(app.getAccountId())
                 .projectId(app.getProjectId())
                 .roleId(app.getRoleId())
+                .applicationId(app.getApplicationId())
                 .applicationDate(convertSqlDateToLocalDate(app.getApplicationDate()))
                 .applicationStatus(app.getApplicationStatus())
                 .lastUpdatedDate(convertSqlDateToLocalDate(app.getLastUpdatedDate()))

@@ -11,6 +11,6 @@ import java.io.Serializable;
 @EqualsAndHashCode
 public class AssignmentId implements Serializable {
 
-    private int userId;
-    private String roleId;
+    private Long userId;
+    private Long roleId;
 }

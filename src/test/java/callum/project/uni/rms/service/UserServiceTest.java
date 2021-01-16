@@ -11,9 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.dao.DataAccessException;
 
-import java.sql.SQLDataException;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -26,6 +24,8 @@ class UserServiceTest {
     private UserService userService;
 
     private static final String GOOGLE_ID = "123703284023018121";
+
+    private static final Long ROLE_ID = 1L;
     @Mock
     private UserRepository userRepository;
 
@@ -42,7 +42,7 @@ class UserServiceTest {
         User user = new User();
         user.setGoogleId(GOOGLE_ID);
         user.setId(1L);
-        user.setCurrentRoleId("1128012");
+        user.setCurrentRoleId(ROLE_ID);
 
         when(userRepository.findByGoogleId(any(String.class)))
                 .thenReturn(Optional.of(user));
@@ -62,7 +62,7 @@ class UserServiceTest {
         User user = new User();
         user.setGoogleId(GOOGLE_ID);
         user.setId(1L);
-        user.setCurrentRoleId("123");
+        user.setCurrentRoleId(ROLE_ID);
 
         when(userRepository.save(any(User.class)))
                 .thenReturn(user);
@@ -70,7 +70,7 @@ class UserServiceTest {
         TargetUser targetUser = userService.createUser(GOOGLE_ID);
         assertAll("Assert all user params are correct",
                 () -> assertEquals(1, targetUser.getId()),
-                () -> assertEquals("123", targetUser.getCurrentRoleId()));
+                () -> assertEquals(ROLE_ID, targetUser.getCurrentRoleId()));
     }
 
     @Test

@@ -28,6 +28,7 @@ public class RoleApplicationServiceTest {
 
     private RoleApplicationRepository roleApplicationRepository;
     private static final Long USER_ID = 1L;
+    private static final Long ROLE_ID = 1L;
 
 
     @BeforeEach
@@ -42,9 +43,9 @@ public class RoleApplicationServiceTest {
 
         RoleApplication roleApplication = RoleApplication.builder()
                 .accountId("123")
-                .applicantId(1L)
+                .applicantId(USER_ID)
                 .projectId("2")
-                .roleId("3")
+                .roleId(ROLE_ID)
                 .applicationDate(Date.valueOf(LocalDate.now()))
                 .lastUpdatedDate(Date.valueOf(LocalDate.now()))
                 .applicationStatus(ApplicationStatus.SUBMITTED)
@@ -56,9 +57,9 @@ public class RoleApplicationServiceTest {
 
         AppCreateReq createReq = AppCreateReq.builder()
                 .accountNumber("123")
-                .applicantId("1")
+                .applicantId(USER_ID)
                 .projectCode("2")
-                .roleId("3")
+                .roleId(ROLE_ID)
                 .build();
 
         roleApplicationService.addNewApplication(createReq);

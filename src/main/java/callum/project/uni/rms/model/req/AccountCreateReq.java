@@ -6,21 +6,26 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @Builder
 @Data
 @NoArgsConstructor
-public class AppCreateReq {
+public class AccountCreateReq {
 
-    @JsonProperty("applicantId")
-    private Long applicantId;
+    @JsonProperty("startDate")
+    private LocalDate startDate;
 
-    @JsonProperty("roleId")
-    private Long roleId;
-
-    @JsonProperty("projectCode")
-    private String projectCode;
+    @JsonProperty("endDate")
+    private LocalDate endDate;
 
     @JsonProperty("accountNumber")
     private String accountNumber;
+
+    @JsonProperty("accountName")
+    private String accountName;
+
+    @JsonProperty("description")
+    private String description;
 }

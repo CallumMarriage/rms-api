@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @ToString
 public class TargetRole extends AbstractServiceResponse {
 
-    private String id;
+    private Long id;
 
     private String roleName;
 

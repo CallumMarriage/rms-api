@@ -12,7 +12,7 @@ public class TargetUser extends AbstractServiceResponse {
 
     private Long id;
 
-    private String currentRoleId;
+    private Long currentRoleId;
 
     private Long resourceManagerId;
 
