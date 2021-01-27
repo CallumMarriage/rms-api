@@ -10,4 +10,6 @@ import java.util.List;
 public interface ProjectRepository extends CrudRepository<Project, String> {
 
     List<Project> findAllByAccountNumber(String accountNumber);
+
+    List<Project> findAllByProjectManagerId(Long projectManagerId);
 }

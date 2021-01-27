@@ -1,9 +1,8 @@
-package callum.project.uni.rms.service.model.response;
+package callum.project.uni.rms.model.res;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
@@ -12,6 +11,8 @@ import java.time.LocalDate;
 @Builder
 public class TargetAccount extends AbstractServiceResponse {
 
+    private Long accountManagerId;
+    
     private String accountName;
 
     private String accountCode;

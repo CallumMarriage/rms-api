@@ -41,4 +41,7 @@ public class RequestRole {
 
     @JsonProperty("description")
     private String description;
+
+    @JsonProperty("isRoleOpen")
+    private boolean isRoleOpen;
 }

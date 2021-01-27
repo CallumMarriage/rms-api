@@ -1,7 +1,7 @@
 package callum.project.uni.rms.service.mapper;
 
 import callum.project.uni.rms.model.req.ProjectCreateReq;
-import callum.project.uni.rms.service.model.response.TargetProject;
+import callum.project.uni.rms.model.res.TargetProject;
 import callum.project.uni.rms.service.repository.model.Project;
 import org.springframework.stereotype.Component;
 
@@ -33,6 +33,7 @@ public class ProjectMapper {
                 .endDate(convertLocalDateToSqlDate(project.getEndDate()))
                 .projectCode(project.getProjectCode())
                 .projectName(project.getProjectName())
+                .projectManagerId(project.getProjectManagerId())
                 .build();
     }
 

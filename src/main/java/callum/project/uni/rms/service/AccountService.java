@@ -3,11 +3,8 @@ package callum.project.uni.rms.service;
 import callum.project.uni.rms.model.req.AccountCreateReq;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.mapper.AccountMapper;
-import callum.project.uni.rms.service.mapper.RoleMapper;
-import callum.project.uni.rms.service.model.response.AbstractServiceResponse;
-import callum.project.uni.rms.service.model.response.TargetAccount;
-import callum.project.uni.rms.service.model.response.TargetRole;
-import callum.project.uni.rms.service.model.response.accounts.AccountList;
+import callum.project.uni.rms.model.res.TargetAccount;
+import callum.project.uni.rms.model.res.accounts.AccountList;
 import callum.project.uni.rms.service.repository.AccountRepository;
 import callum.project.uni.rms.service.repository.model.Account;
 import lombok.AllArgsConstructor;
@@ -65,6 +62,22 @@ public class AccountService {
 
             return AccountList.builder()
                     .accountList(accountList)
+                    .build();
+        } catch (RuntimeException e) {
+            throw new ServiceException("Issue retrieving account");
+        } catch (Exception e) {
+            throw new ServiceException("Issue mapping account");
+        }
+    }
+
+    public AccountList getAccountList(Long userId) throws ServiceException {
+        try {
+            List<Account> accounts = accountRepository.findAllByAccountManagerId(userId);
+
+            return AccountList.builder()
+                    .accountList(accounts.stream()
+                            .map(AccountMapper::mapAccountToTargetAccount)
+                            .collect(Collectors.toList()))
                     .build();
         } catch (RuntimeException e) {
             throw new ServiceException("Issue retrieving account");

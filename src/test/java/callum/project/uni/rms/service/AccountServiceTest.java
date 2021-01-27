@@ -1,8 +1,8 @@
 package callum.project.uni.rms.service;
 
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.response.TargetAccount;
-import callum.project.uni.rms.service.model.response.accounts.AccountList;
+import callum.project.uni.rms.model.res.TargetAccount;
+import callum.project.uni.rms.model.res.accounts.AccountList;
 import callum.project.uni.rms.service.repository.AccountRepository;
 import callum.project.uni.rms.service.repository.model.Account;
 import org.junit.jupiter.api.AfterEach;

@@ -1,8 +1,7 @@
-package callum.project.uni.rms.service.model.response.application;
+package callum.project.uni.rms.model.res.application;
 
-import callum.project.uni.rms.service.model.response.AbstractServiceResponse;
-import callum.project.uni.rms.service.model.response.TargetApplication;
-import callum.project.uni.rms.service.model.response.TargetUser;
+import callum.project.uni.rms.model.res.AbstractServiceResponse;
+import callum.project.uni.rms.model.res.TargetApplication;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

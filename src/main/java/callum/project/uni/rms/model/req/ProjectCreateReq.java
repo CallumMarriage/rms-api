@@ -32,4 +32,7 @@ public class ProjectCreateReq {
     @JsonProperty("description")
     private String description;
 
+    @JsonProperty("projectManagerId")
+    private Long projectManagerId;
+
 }

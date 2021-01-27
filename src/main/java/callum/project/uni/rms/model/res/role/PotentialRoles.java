@@ -1,7 +1,8 @@
-package callum.project.uni.rms.service.model.response.role;
+package callum.project.uni.rms.model.res.role;
 
-import callum.project.uni.rms.service.model.response.AbstractServiceResponse;
-import callum.project.uni.rms.service.model.response.TargetRole;
+import callum.project.uni.rms.model.res.AbstractServiceResponse;
+import callum.project.uni.rms.model.res.RoleSubmission;
+import callum.project.uni.rms.model.res.TargetRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

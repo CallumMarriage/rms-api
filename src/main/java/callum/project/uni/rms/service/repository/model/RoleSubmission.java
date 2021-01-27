@@ -15,13 +15,16 @@ import java.sql.Date;
 @Builder
 @Data
 @Entity
-@Table(name = "role")
-public class Role {
+@Table(name = "role_submission")
+public class RoleSubmission {
 
     @Id
     @GeneratedValue
-    @Column(name = "id")
-    private Long id;
+    @Column(name = "submission_id")
+    private Long submissionId;
+
+    @Column(name = "candidate_id")
+    private Long candidateId;
 
     @Column(name = "role_name")
     private String roleName;
@@ -53,7 +56,4 @@ public class Role {
     @Enumerated(EnumType.STRING)
     @Column(name = "closest_cap_office")
     private CapgeminiOffice closestCapOffice;
-
-    @Column(name = "is_role_open")
-    private Integer isRoleOpen;
 }

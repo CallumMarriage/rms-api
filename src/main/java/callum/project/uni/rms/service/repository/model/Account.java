@@ -20,7 +20,7 @@ import java.sql.Date;
 public class Account {
 
     @Column(name = "account_manager_id")
-    private String accountManagerId;
+    private Long accountManagerId;
 
     @Id
     @Column(name = "account_number")
@@ -29,7 +29,7 @@ public class Account {
     @Column(name = "account_name")
     private String accountName;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition="TEXT")
     private String description;
 
     @Column(name = "start_date")

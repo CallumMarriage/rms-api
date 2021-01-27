@@ -1,4 +1,4 @@
-package callum.project.uni.rms.service.model.response;
+package callum.project.uni.rms.model.res;
 
 import callum.project.uni.rms.common.CapgeminiOffice;
 import callum.project.uni.rms.common.RoleType;
@@ -34,4 +34,5 @@ public class TargetRole extends AbstractServiceResponse {
 
     private CapgeminiOffice closestCapOffice;
 
+    private Boolean isRoleOpen;
 }

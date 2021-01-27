@@ -1,15 +1,14 @@
 package callum.project.uni.rms;
 
 import callum.project.uni.rms.model.req.AccountCreateReq;
-import callum.project.uni.rms.model.res.ControllerRes;
+import callum.project.uni.rms.model.res.AbstractServiceResponse;
 import callum.project.uni.rms.service.AccountService;
 import callum.project.uni.rms.service.ProjectService;
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.response.TargetAccount;
-import callum.project.uni.rms.service.model.response.TargetProject;
-import callum.project.uni.rms.service.model.response.accounts.AccountList;
-import callum.project.uni.rms.service.model.response.accounts.FullAccountInfo;
-import callum.project.uni.rms.service.repository.model.Project;
+import callum.project.uni.rms.model.res.TargetAccount;
+import callum.project.uni.rms.model.res.TargetProject;
+import callum.project.uni.rms.model.res.accounts.AccountList;
+import callum.project.uni.rms.model.res.accounts.FullAccountInfo;
 import callum.project.uni.rms.validator.RequestValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +30,7 @@ public class AccountController {
     private final RequestValidator requestValidator;
 
     @GetMapping(value = "/account/id/{accountNumber}", produces = "application/json")
-    public ResponseEntity<ControllerRes> retrieveTargetAccount(@PathVariable String accountNumber) {
+    public ResponseEntity<AbstractServiceResponse> retrieveTargetAccount(@PathVariable String accountNumber) {
 
         //Validate Request id
         if (requestValidator.validateGetByIdReq(accountNumber)) {
@@ -58,22 +57,29 @@ public class AccountController {
         }
     }
 
-    @GetMapping(value = "/accounts", produces = "application/json")
-    public ResponseEntity<ControllerRes> retrieveAccountList() {
-        try {
-            //Call Service to get response object
-            AccountList serviceResponse = accountService.getAccountList();
+    @GetMapping(value = "/accounts")
+    public ResponseEntity<AbstractServiceResponse> retrieveAccounts(
+            @RequestParam(required = false) Long accountManagerId) {
 
-            //Return ok response
+        try {
+            AccountList serviceResponse;
+
+            if (accountManagerId != null) {
+                serviceResponse = accountService.getAccountList(accountManagerId);
+            } else {
+                serviceResponse = accountService.getAccountList();
+            }
+
             return buildOkResponse(serviceResponse);
+
         } catch (ServiceException e) {
-            //Return 500 response
             return buildErrorResponse();
         }
+
     }
 
     @GetMapping(value = "/account", params = "accountName", produces = "application/json")
-    public ResponseEntity<ControllerRes> retrieveAccountList(@RequestParam String accountName) {
+    public ResponseEntity<AbstractServiceResponse> retrieveAccountList(@RequestParam String accountName) {
         try {
             //Call Service to get response object
             TargetAccount serviceResponse = accountService.getAccountByName(accountName);
@@ -90,12 +96,10 @@ public class AccountController {
     }
 
     @PostMapping(value = "/account", produces = "application/json")
-    public ResponseEntity<ControllerRes> addNewAccount(@RequestBody AccountCreateReq accountCreateReq) {
+    public ResponseEntity<AbstractServiceResponse> addNewAccount(@RequestBody AccountCreateReq accountCreateReq) {
         try {
 
-            if (requestValidator.invalid(accountCreateReq.getAccountNumber()) ||
-                    requestValidator.invalid(accountCreateReq.getAccountName()) ||
-                    requestValidator.invalid(accountCreateReq.getStartDate())) {
+            if (requestValidator.validateAccountCreateReq(accountCreateReq)) {
                 return buildBadReqResponse();
             }
 

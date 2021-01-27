@@ -1,4 +1,4 @@
-package callum.project.uni.rms.service.model.response;
+package callum.project.uni.rms.model.res;
 
 import callum.project.uni.rms.service.repository.model.ApplicationStatus;
 import lombok.AllArgsConstructor;
@@ -10,8 +10,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @Builder
-public class TargetApplication {
-    
+public class TargetApplication extends AbstractServiceResponse{
+
+    private Long applicantId;
+
     private LocalDate applicationDate;
 
     private LocalDate lastUpdatedDate;

@@ -1,6 +1,6 @@
-package callum.project.uni.rms.service.model.response.user;
+package callum.project.uni.rms.model.res.user;
 
-import callum.project.uni.rms.service.model.response.*;
+import callum.project.uni.rms.model.res.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

@@ -20,7 +20,7 @@ import java.sql.Date;
 public class Project {
 
     @Column(name = "project_manager_id")
-    private String projectManagerId;
+    private Long projectManagerId;
 
     @Column(name = "project_name")
     private String projectName;
@@ -32,7 +32,7 @@ public class Project {
     @Column(name = "account_number")
     private String accountNumber;
 
-    @Column(name = "description")
+    @Column(name = "description", columnDefinition="TEXT")
     private String description;
 
     @Column(name = "start_date")

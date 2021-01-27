@@ -25,7 +25,7 @@ public class RoleApplication {
 
     @Column(name = "applicant_id")
     private Long applicantId;
-
+    
     @Column(name = "role_id")
     private Long roleId;
 

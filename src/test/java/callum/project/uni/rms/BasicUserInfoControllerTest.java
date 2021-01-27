@@ -1,17 +1,14 @@
 package callum.project.uni.rms;
 
+import callum.project.uni.rms.common.UserType;
 import callum.project.uni.rms.model.req.UserCreateReq;
-import callum.project.uni.rms.model.res.ControllerRes;
+import callum.project.uni.rms.model.res.*;
 import callum.project.uni.rms.service.AccountService;
 import callum.project.uni.rms.service.ProjectService;
 import callum.project.uni.rms.service.RoleService;
 import callum.project.uni.rms.service.UserService;
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.response.TargetAccount;
-import callum.project.uni.rms.service.model.response.TargetProject;
-import callum.project.uni.rms.service.model.response.TargetRole;
-import callum.project.uni.rms.service.model.response.TargetUser;
-import callum.project.uni.rms.service.model.response.user.FullUserInfo;
+import callum.project.uni.rms.model.res.user.FullUserInfo;
 import callum.project.uni.rms.validator.RequestValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +37,7 @@ public class BasicUserInfoControllerTest {
 
     private RoleService roleService;
 
-    private static final String GOOGLE_ID = "2801830283028310810281";
+    private static final String SSO_ID = "2801830283028310810281";
     private static final Long USER_ID = 1L;
     private static final String PROJECT_CODE = "888";
     private static final String ACCOUNT_NUMBER = "999";
@@ -68,30 +65,31 @@ public class BasicUserInfoControllerTest {
         TargetUser mockedUser = TargetUser
                 .builder()
                 .id(USER_ID)
+                .userType(UserType.CANDIDATE)
                 .currentRoleId(ROLE_ID)
                 .build();
-        when(userService.retrieveUserDetailsByGoogleId(eq(GOOGLE_ID)))
+        when(userService.retrieveUserDetailsBySsoId(eq(SSO_ID)))
                 .thenReturn(mockedUser);
 
-        ResponseEntity<ControllerRes> result = basicUserInfoController.getUserInfo(GOOGLE_ID);
+        ResponseEntity<AbstractServiceResponse> result = basicUserInfoController.getUserInfo(SSO_ID);
         assertEquals(200, result.getStatusCode().value());
-        FullUserInfo responseBody = (FullUserInfo) result.getBody().getResponseBody();
+        FullUserInfo responseBody = (FullUserInfo) result.getBody();
         validateFullInfoResponseBody(responseBody);
     }
 
     @Test
     @DisplayName("Test get user info bad request")
     void getUserInfo_badRequest(){
-        ResponseEntity<ControllerRes> result = basicUserInfoController.getUserInfo(null);
+        ResponseEntity<AbstractServiceResponse> result = basicUserInfoController.getUserInfo(null);
         assertEquals(400, result.getStatusCode().value());
     }
 
     @Test
     @DisplayName("Test get User info server error thrown")
     void getUserInfo_serverError() throws ServiceException {
-        when(userService.retrieveUserDetailsByGoogleId(eq(GOOGLE_ID)))
+        when(userService.retrieveUserDetailsBySsoId(eq(SSO_ID)))
                 .thenThrow(new ServiceException("TEST ERROR"));
-        ResponseEntity<ControllerRes> result = basicUserInfoController.getUserInfo(GOOGLE_ID);
+        ResponseEntity<AbstractServiceResponse> result = basicUserInfoController.getUserInfo(SSO_ID);
         assertEquals(500, result.getStatusCode().value());
     }
 
@@ -100,23 +98,21 @@ public class BasicUserInfoControllerTest {
     void addUser_happyPath() throws ServiceException {
         initMock();
 
-        when(userService.userExists(eq(GOOGLE_ID)))
-                .thenReturn(false);
         TargetUser mockedUser = TargetUser
                 .builder()
                 .id(USER_ID)
                 .currentRoleId(ROLE_ID)
                 .build();
-        when(userService.createUser(eq(GOOGLE_ID)))
+        when(userService.createUser(any(UserCreateReq.class)))
                 .thenReturn(mockedUser);
 
 
         UserCreateReq req = buildCreateReq();
 
-        ResponseEntity<ControllerRes> result = basicUserInfoController.addNewUser(req);
+        ResponseEntity<AbstractServiceResponse> result = basicUserInfoController.addNewUser(req);
 
         assertEquals(201, result.getStatusCode().value());
-        FullUserInfo responseBody = (FullUserInfo) result.getBody().getResponseBody();
+        FullUserInfo responseBody = (FullUserInfo) result.getBody();
         validateFullInfoResponseBody(responseBody);
     }
 
@@ -125,7 +121,7 @@ public class BasicUserInfoControllerTest {
     void addUser_badReq(){
         UserCreateReq userCreateReq = UserCreateReq.builder()
                 .build();
-        ResponseEntity<ControllerRes> result = basicUserInfoController.addNewUser(userCreateReq);
+        ResponseEntity<AbstractServiceResponse> result = basicUserInfoController.addNewUser(userCreateReq);
         assertEquals(400, result.getStatusCode().value());
     }
 
@@ -134,33 +130,10 @@ public class BasicUserInfoControllerTest {
     void addUser_serverError() throws ServiceException {
         UserCreateReq userCreateReq = buildCreateReq();
 
-        when(userService.createUser(eq(GOOGLE_ID)))
+        when(userService.createUser(any(UserCreateReq.class)))
                 .thenThrow(new ServiceException("TEST ERROR"));
-        ResponseEntity<ControllerRes> result = basicUserInfoController.addNewUser(userCreateReq);
+        ResponseEntity<AbstractServiceResponse> result = basicUserInfoController.addNewUser(userCreateReq);
         assertEquals(500, result.getStatusCode().value());
-    }
-
-    @Test
-    @DisplayName("Test add user when user already exists")
-    void addUser_userExists() throws ServiceException {
-        initMock();
-        when(userService.userExists(eq(GOOGLE_ID)))
-                .thenReturn(true);
-
-        TargetUser mockedUser = TargetUser
-                .builder()
-                .id(USER_ID)
-                .currentRoleId(ROLE_ID)
-                .build();
-        when(userService.retrieveUserDetailsByGoogleId(eq(GOOGLE_ID)))
-                .thenReturn(mockedUser);
-
-        UserCreateReq userCreateReq = buildCreateReq();
-        ResponseEntity<ControllerRes> result = basicUserInfoController.addNewUser(userCreateReq);
-        verify(userService, never()).createUser(any());
-        assertEquals(202, result.getStatusCode().value());
-        FullUserInfo responseBody = (FullUserInfo) result.getBody().getResponseBody();
-        validateFullInfoResponseBody(responseBody);
     }
 
     private void initMock() throws ServiceException {
@@ -208,7 +181,8 @@ public class BasicUserInfoControllerTest {
 
     private UserCreateReq buildCreateReq(){
         return UserCreateReq.builder()
-                .googleId(GOOGLE_ID)
+                .ssoId(SSO_ID)
+                .userType(UserType.CANDIDATE)
                 .build();
     }
 }

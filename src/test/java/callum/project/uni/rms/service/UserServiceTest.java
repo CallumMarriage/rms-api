@@ -1,7 +1,9 @@
 package callum.project.uni.rms.service;
 
+import callum.project.uni.rms.model.req.UserCreateReq;
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.response.TargetUser;
+import callum.project.uni.rms.model.res.TargetUser;
+import callum.project.uni.rms.model.res.user.UserExist;
 import callum.project.uni.rms.service.repository.UserRepository;
 import callum.project.uni.rms.service.repository.model.User;
 import org.junit.jupiter.api.AfterEach;
@@ -23,7 +25,7 @@ class UserServiceTest {
 
     private UserService userService;
 
-    private static final String GOOGLE_ID = "123703284023018121";
+    private static final String SSO_ID = "123703284023018121";
 
     private static final Long ROLE_ID = 1L;
     @Mock
@@ -40,34 +42,39 @@ class UserServiceTest {
     void userExists_returnsTrue() throws ServiceException {
 
         User user = new User();
-        user.setGoogleId(GOOGLE_ID);
+        user.setSsoId(SSO_ID);
         user.setId(1L);
         user.setCurrentRoleId(ROLE_ID);
 
-        when(userRepository.findByGoogleId(any(String.class)))
+        when(userRepository.findBySsoId(any(String.class)))
                 .thenReturn(Optional.of(user));
-        assertTrue(userService.userExists(GOOGLE_ID));
+        UserExist userExist = userService.userExists(SSO_ID);
+        assertTrue(userExist.isUserExist());
     }
 
     @Test
     void userExists_returnsFalse() throws ServiceException {
-        when(userRepository.findByGoogleId(any(String.class)))
+        when(userRepository.findBySsoId(any(String.class)))
                 .thenReturn(Optional.empty());
 
-        assertFalse(userService.userExists(GOOGLE_ID));
+        assertFalse(userService.userExists(SSO_ID).isUserExist());
     }
 
     @Test
     void createUser_happyPath() throws ServiceException {
         User user = new User();
-        user.setGoogleId(GOOGLE_ID);
+        user.setSsoId(SSO_ID);
         user.setId(1L);
         user.setCurrentRoleId(ROLE_ID);
 
         when(userRepository.save(any(User.class)))
                 .thenReturn(user);
 
-        TargetUser targetUser = userService.createUser(GOOGLE_ID);
+        UserCreateReq createReq = UserCreateReq.builder()
+                .ssoId(SSO_ID)
+                .build();
+
+        TargetUser targetUser = userService.createUser(createReq);
         assertAll("Assert all user params are correct",
                 () -> assertEquals(1, targetUser.getId()),
                 () -> assertEquals(ROLE_ID, targetUser.getCurrentRoleId()));
@@ -78,7 +85,7 @@ class UserServiceTest {
         when(userRepository.save(any(User.class)))
                 .thenThrow(IllegalArgumentException.class);
 
-        assertThrows(ServiceException.class,() -> userService.createUser(GOOGLE_ID));
+        assertThrows(ServiceException.class,() -> userService.createUser(new UserCreateReq()));
     }
 
     @AfterEach

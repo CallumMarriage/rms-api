@@ -1,14 +1,13 @@
 package callum.project.uni.rms;
 
-import callum.project.uni.rms.model.res.ControllerRes;
+import callum.project.uni.rms.model.res.AbstractServiceResponse;
 import callum.project.uni.rms.service.AccountService;
 import callum.project.uni.rms.service.ProjectService;
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.response.TargetAccount;
-import callum.project.uni.rms.service.model.response.TargetProject;
-import callum.project.uni.rms.service.model.response.accounts.FullAccountInfo;
+import callum.project.uni.rms.model.res.TargetAccount;
+import callum.project.uni.rms.model.res.TargetProject;
+import callum.project.uni.rms.model.res.accounts.FullAccountInfo;
 import callum.project.uni.rms.validator.RequestValidator;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +16,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -66,10 +63,10 @@ class AccountControllerTest {
                 .thenReturn(mockedAccount);
         when(projectService.getProjectListForAccount("131232"))
                 .thenReturn(mockedProjects);
-        ResponseEntity<ControllerRes> result = accountController.retrieveTargetAccount(USER_ID);
+        ResponseEntity<AbstractServiceResponse> result = accountController.retrieveTargetAccount(USER_ID);
 
         assertEquals(200, result.getStatusCode().value());
-        FullAccountInfo accountInfo = (FullAccountInfo) result.getBody().getResponseBody();
+        FullAccountInfo accountInfo = (FullAccountInfo) result.getBody();
 
         assertEquals("131232", accountInfo.getAccount().getAccountCode());
         assertEquals("1", accountInfo.getProjectList().get(0).getProjectCode());
@@ -78,7 +75,7 @@ class AccountControllerTest {
     @Test
     @DisplayName("Bad request")
     void retrieveTargetAccount_badRequest() {
-        ResponseEntity<ControllerRes> result = accountController.retrieveTargetAccount(null);
+        ResponseEntity<AbstractServiceResponse> result = accountController.retrieveTargetAccount(null);
 
         assertEquals(400, result.getStatusCode().value());
     }
@@ -89,7 +86,7 @@ class AccountControllerTest {
     void retrieveTargetAccount_serviceException() throws ServiceException {
         when(accountService.getTargetAccountById(eq(USER_ID)))
                 .thenThrow(new ServiceException("TEST - Could not connect"));
-        ResponseEntity<ControllerRes> result = accountController.retrieveTargetAccount(USER_ID);
+        ResponseEntity<AbstractServiceResponse> result = accountController.retrieveTargetAccount(USER_ID);
 
         assertEquals(500, result.getStatusCode().value());
     }

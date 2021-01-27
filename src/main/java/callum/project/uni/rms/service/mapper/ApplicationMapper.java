@@ -1,6 +1,6 @@
 package callum.project.uni.rms.service.mapper;
 
-import callum.project.uni.rms.service.model.response.TargetApplication;
+import callum.project.uni.rms.model.res.TargetApplication;
 import callum.project.uni.rms.service.repository.model.RoleApplication;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +16,7 @@ public class ApplicationMapper {
                 .projectId(app.getProjectId())
                 .roleId(app.getRoleId())
                 .applicationId(app.getApplicationId())
+                .applicantId(app.getApplicantId())
                 .applicationDate(convertSqlDateToLocalDate(app.getApplicationDate()))
                 .applicationStatus(app.getApplicationStatus())
                 .lastUpdatedDate(convertSqlDateToLocalDate(app.getLastUpdatedDate()))

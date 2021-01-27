@@ -2,7 +2,7 @@ package callum.project.uni.rms.service;
 
 import callum.project.uni.rms.model.req.AppCreateReq;
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.response.application.ApplicationsForUser;
+import callum.project.uni.rms.model.res.application.ApplicationsForUser;
 import callum.project.uni.rms.service.repository.RoleApplicationRepository;
 import callum.project.uni.rms.service.repository.model.ApplicationStatus;
 import callum.project.uni.rms.service.repository.model.RoleApplication;

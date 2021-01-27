@@ -1,14 +1,14 @@
 package callum.project.uni.rms;
 
-import callum.project.uni.rms.model.res.ControllerRes;
+import callum.project.uni.rms.model.res.*;
 import callum.project.uni.rms.service.AccountService;
 import callum.project.uni.rms.service.ProjectService;
 import callum.project.uni.rms.service.RoleService;
 import callum.project.uni.rms.service.UserService;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.model.req.UserCreateReq;
-import callum.project.uni.rms.service.model.response.*;
-import callum.project.uni.rms.service.model.response.user.FullUserInfo;
+import callum.project.uni.rms.model.res.user.FullUserInfo;
+import callum.project.uni.rms.model.res.user.UserExist;
 import callum.project.uni.rms.validator.RequestValidator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,22 +35,29 @@ public class BasicUserInfoController {
 
     private final ProjectService projectService;
 
+    @GetMapping(value = "/user/exists")
+    public ResponseEntity<AbstractServiceResponse> doesUserExists(@RequestParam("ssoId") String ssoId){
+        log.info(ssoId);
+        if(requestValidator.invalid(ssoId)){
+            return buildBadReqResponse();
+        }
+
+        try {
+            UserExist userExist = userService.userExists(ssoId);
+            return buildOkResponse(userExist);
+        } catch (ServiceException e){
+            return buildErrorResponse();
+        }
+    }
+
     @PostMapping(value = "/user")
-    public ResponseEntity<ControllerRes> addNewUser(@RequestBody UserCreateReq userCreateRequest) {
+    public ResponseEntity<AbstractServiceResponse> addNewUser(@RequestBody UserCreateReq userCreateRequest) {
         if (requestValidator.validateUserCreateRequest(userCreateRequest)) {
             return buildBadReqResponse();
         }
 
-        String googleId = userCreateRequest.getGoogleId();
-
         try {
-            if (userService.userExists(googleId)) {
-                TargetUser user = userService.retrieveUserDetailsByGoogleId(googleId);
-                return ResponseEntity.status(202)
-                        .body(createControllerResponse(user));
-            }
-
-            TargetUser user = userService.createUser(googleId);
+            TargetUser user = userService.createUser(userCreateRequest);
             return buildCreatedResponse(buildUserInfoResponse(user));
         } catch (ServiceException e) {
             return buildErrorResponse();
@@ -58,16 +65,16 @@ public class BasicUserInfoController {
     }
 
     @GetMapping(value = "/user/info")
-    public ResponseEntity<ControllerRes> getUserInfo(@RequestParam String googleId){
+    public ResponseEntity<AbstractServiceResponse> getUserInfo(@RequestParam String ssoId){
 
-        if (requestValidator.validateGetByIdReq(googleId)){
+        if (requestValidator.validateGetByIdReq(ssoId)){
             return buildBadReqResponse();
         }
 
         try {
-            TargetUser user = userService.retrieveUserDetailsByGoogleId(googleId);
+            TargetUser user = userService.retrieveUserDetailsBySsoId(ssoId);
             return ResponseEntity.status(200)
-                    .body(createControllerResponse(user));
+                    .body(buildUserInfoResponse(user));
         }  catch (ServiceException e) {
             log.error(e.getMessage());
             return buildErrorResponse();
@@ -75,31 +82,18 @@ public class BasicUserInfoController {
     }
 
     @GetMapping(value = "/user/resourceManager/:id")
-    public ResponseEntity<ControllerRes> getResourceManagerName(@PathVariable Long rmId){
+    public ResponseEntity<AbstractServiceResponse> getResourceManagerName(@PathVariable Long rmId){
         if (rmId == null){
             return buildBadReqResponse();
         }
 
         try {
             TargetUser user = userService.retrieveUserByInternalId(rmId);
-            return ResponseEntity.status(200)
-                    .body(createControllerResponse(user));
+            return buildOkResponse(user);
         }  catch (ServiceException e) {
             log.error(e.getMessage());
             return buildErrorResponse();
         }
-    }
-
-    /**
-     * Create Controller response model using user data. This model includes a full role history.
-     *
-     * @param user user data.
-     * @return controller response model
-     */
-    private ControllerRes createControllerResponse(TargetUser user) throws ServiceException {
-        return ControllerRes.builder()
-                .responseBody(buildUserInfoResponse(user))
-                .build();
     }
 
     private FullUserInfo buildUserInfoResponse(TargetUser user) throws ServiceException {

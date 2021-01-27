@@ -28,4 +28,7 @@ public class AccountCreateReq {
 
     @JsonProperty("description")
     private String description;
+
+    @JsonProperty("accountManagerId")
+    private Long accountManagerId;
 }

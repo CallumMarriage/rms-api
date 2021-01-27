@@ -1,11 +1,9 @@
 package callum.project.uni.rms.service.mapper;
 
 import callum.project.uni.rms.model.req.RequestRole;
-import callum.project.uni.rms.service.model.response.TargetRole;
+import callum.project.uni.rms.model.res.TargetRole;
 import callum.project.uni.rms.service.repository.model.Role;
 import org.springframework.stereotype.Component;
-
-import java.sql.Date;
 
 import static callum.project.uni.rms.service.mapper.MapperUtils.convertLocalDateToSqlDate;
 import static callum.project.uni.rms.service.mapper.MapperUtils.convertSqlDateToLocalDate;
@@ -26,6 +24,7 @@ public class RoleMapper {
                 .description(dbRole.getDescription())
                 .closestCapOffice(dbRole.getClosestCapOffice())
                 .roleType(dbRole.getRoleType())
+                .isRoleOpen(convertToBool(dbRole.getIsRoleOpen()))
                 .build();
     }
 
@@ -38,9 +37,21 @@ public class RoleMapper {
                 .accountNumber(req.getAccountNumber())
                 .accountName(req.getAccountName())
                 .description(req.getDescription())
+                .isRoleOpen(convertToInt(req.isRoleOpen()))
                 .startDate(convertLocalDateToSqlDate(req.getStartDate()))
                 .endDate(convertLocalDateToSqlDate(req.getEndDate()))
                 .build();
     }
 
+    private static boolean convertToBool(int bool){
+        return bool == 1;
+    }
+
+    private static int convertToInt(boolean value){
+        if(value){
+            return 1;
+        } else {
+            return 0;
+        }
+    }
 }

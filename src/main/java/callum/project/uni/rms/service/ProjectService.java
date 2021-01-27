@@ -3,7 +3,8 @@ package callum.project.uni.rms.service;
 import callum.project.uni.rms.model.req.ProjectCreateReq;
 import callum.project.uni.rms.service.exception.ServiceException;
 import callum.project.uni.rms.service.mapper.ProjectMapper;
-import callum.project.uni.rms.service.model.response.TargetProject;
+import callum.project.uni.rms.model.res.TargetProject;
+import callum.project.uni.rms.model.res.projects.Projects;
 import callum.project.uni.rms.service.repository.ProjectRepository;
 import callum.project.uni.rms.service.repository.model.Project;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,27 @@ public class ProjectService {
         } catch (Exception e) {
             throw new ServiceException("Issue mapping account");
         }
+    }
 
+    public Projects retrieveProjectsByProjectManager(Long projectManagerId) throws ServiceException {
+
+        try {
+
+            List<Project> projectsDb = projectRepository.findAllByProjectManagerId(projectManagerId);
+
+            List<TargetProject> mappedProjects = projectsDb.parallelStream()
+                    .map(ProjectMapper::mapProjectToTargetProject)
+                    .collect(Collectors.toList());
+
+            return Projects.builder()
+                    .projects(mappedProjects)
+                    .build();
+
+        } catch (RuntimeException e) {
+            throw new ServiceException("Issue retrieving account");
+        } catch (Exception e) {
+            throw new ServiceException("Issue mapping account");
+        }
     }
 
     public List<TargetProject> getProjectListForAccount(String accountNumber) throws ServiceException {

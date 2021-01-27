@@ -3,14 +3,14 @@ package callum.project.uni.rms;
 import callum.project.uni.rms.common.RoleType;
 import callum.project.uni.rms.model.req.RequestRole;
 import callum.project.uni.rms.model.req.RoleCreateReq;
-import callum.project.uni.rms.model.res.ControllerRes;
+import callum.project.uni.rms.model.res.AbstractServiceResponse;
 import callum.project.uni.rms.service.AssignmentService;
 import callum.project.uni.rms.service.RoleService;
 import callum.project.uni.rms.service.UserService;
 import callum.project.uni.rms.service.exception.ServiceException;
-import callum.project.uni.rms.service.model.response.TargetRole;
-import callum.project.uni.rms.service.model.response.TargetRoleHistory;
-import callum.project.uni.rms.service.model.response.role.PotentialRoles;
+import callum.project.uni.rms.model.res.TargetRole;
+import callum.project.uni.rms.model.res.TargetRoleHistory;
+import callum.project.uni.rms.model.res.role.PotentialRoles;
 import callum.project.uni.rms.service.repository.model.Role;
 import callum.project.uni.rms.validator.RequestValidator;
 import lombok.AllArgsConstructor;
@@ -33,8 +33,22 @@ public class RoleController {
     private final UserService userService;
     private final AssignmentService assignmentService;
 
+    @GetMapping(value = "/roles")
+    public ResponseEntity<AbstractServiceResponse> filterPotentialRoles(
+            @RequestParam(required = false) String accountName,
+            @RequestParam(required = false) String projectName,
+            @RequestParam(required = false) RoleType roleType) {
+
+        try {
+            PotentialRoles potentialRoles = roleService.runFilters(accountName, projectName, roleType);
+            return buildOkResponse(potentialRoles);
+        } catch (ServiceException e){
+            return buildErrorResponse();
+        }
+    }
+
     @PostMapping(value = "/role")
-    public ResponseEntity<ControllerRes> postRoleWithUser(@RequestBody RoleCreateReq req) {
+    public ResponseEntity<AbstractServiceResponse> postRoleWithUser(@RequestBody RoleCreateReq req) {
         log.info("REQUEST RECEIVED");
         Long userId = req.getUserId();
         RequestRole requestRole = req.getRole();
@@ -63,7 +77,7 @@ public class RoleController {
     }
 
     @GetMapping(value = "/roles", params = "userId", produces = "application/json")
-    public ResponseEntity<ControllerRes> getRoleHistory(@RequestParam String userId) {
+    public ResponseEntity<AbstractServiceResponse> getRoleHistory(@RequestParam String userId) {
         log.info("REQUEST RECEIVED");
         if (userId == null || userId.isEmpty()) {
             log.debug("REQUEST: Failed validation");
@@ -90,8 +104,25 @@ public class RoleController {
         }
     }
 
+    @GetMapping(value = "/role/newRequests", params = "rmId")
+    public ResponseEntity<AbstractServiceResponse> retrieveNewRoleRequests(@RequestParam Long rmId) {
+        try {
+
+            if(requestValidator.invalid(rmId)){
+                return buildBadReqResponse();
+            }
+
+            PotentialRoles roleRequests = roleService.retrieveNewRoleRequests(rmId);
+
+            return buildOkResponse(roleRequests);
+
+        } catch (ServiceException e){
+            return buildErrorResponse();
+        }
+    }
+
     @GetMapping(value = "/roles", params = "roleType")
-    public ResponseEntity<ControllerRes> getRolesByRoleType(@RequestParam RoleType roleType) {
+    public ResponseEntity<AbstractServiceResponse> getRolesByRoleType(@RequestParam RoleType roleType) {
         log.info("REQUEST RECIEVED");
         try {
 
@@ -105,7 +136,7 @@ public class RoleController {
     }
 
     @GetMapping(value = "/role/id/{id}", produces = "application/json")
-    public ResponseEntity<ControllerRes> getTargetRole(@PathVariable Long id) {
+    public ResponseEntity<AbstractServiceResponse> getTargetRole(@PathVariable Long id) {
         log.info("REQUEST RECEIVED");
 
         if (requestValidator.validateGetByIdReq(id)) {
@@ -133,7 +164,7 @@ public class RoleController {
     }
 
     @GetMapping(value = "/roles", produces = "application/json")
-    public ResponseEntity<ControllerRes> getRoles() {
+    public ResponseEntity<AbstractServiceResponse> getRoles() {
         try {
             PotentialRoles response = roleService.retrievePotentialRoles();
 
